@@ -1,8 +1,8 @@
-var YourContract = artifacts.require("test");
+var Contract = artifacts.require("testbase");
 
-contract('YourContract', function(accounts) {
+contract('Contract', function(accounts) {
   it("get the size of the contract", function() {
-    return YourContract.deployed().then(function(instance) {
+    return Contract.deployed().then(function(instance) {
       var bytecode = instance.constructor._json.bytecode;
       var deployed = instance.constructor._json.deployedBytecode;
       var sizeOfB  = bytecode.length / 2;
