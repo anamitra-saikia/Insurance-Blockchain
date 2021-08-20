@@ -17,8 +17,5 @@ contract Profile{
         require(msg.sender == manager) ;
         _;
     }
-    
-    function setVerify() public onlyManager{
-        verified = true ;  
-    }
+
 }
