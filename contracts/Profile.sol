@@ -17,5 +17,4 @@ contract Profile{
         require(msg.sender == manager) ;
         _;
     }
-
 }
