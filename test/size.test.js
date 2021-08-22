@@ -1,4 +1,4 @@
-var Contract = artifacts.require("testbase");
+var Contract = artifacts.require("insuranceRB");
 
 contract('Contract', function(accounts) {
   it("get the size of the contract", function() {
