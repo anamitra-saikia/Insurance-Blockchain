@@ -5,12 +5,12 @@ pragma solidity ^0.8.0 ;
 
 contract insuranceCL{
 
-    address public policyholder ;
-    string infoipfs ;
-    uint premium ;
     bool paymentdue ;
     bool claimed ;
     bool init ;
+    uint64 premium ;
+    address public policyholder ;
+    string infoipfs ;
 
     modifier initOnly(){
         require(!init , "Insurance Already Initialized");
@@ -19,7 +19,7 @@ contract insuranceCL{
     }
 
     modifier onlyAdmin(){
-        require(msg.sender == 0x7e9e9cfd7180054115e3910FdD7f8A5D962de7C8 , "Access Denied : Caller is not Admin");
+        require(msg.sender == 0x7e9e9cfd7180054115e3910FdD7f8A5D962de7C8 , "Access Denied : Not Admin");
         _;
     }
 
@@ -43,14 +43,14 @@ contract insuranceCL{
     ) ;
     
     //Initialize function
-    function initializeProfile(address _addr , string memory _ipfs) public initOnly{
+    function initialize(address _addr , string memory _ipfs) public initOnly{
         policyholder = _addr ;
         infoipfs = _ipfs ;
         emit Status(block.timestamp, policyholder, address(this) , "The Insurance Policy is initialized") ;
     }
 
     //set basic policy info by manager
-    function setInfo(uint _premium, bool _payment) external onlyAdmin claimedstatus{
+    function setInfo(uint64 _premium, bool _payment) external onlyAdmin claimedstatus{
         premium = _premium ;
         paymentdue = _payment ;
         claimed = false ;
@@ -69,7 +69,7 @@ contract insuranceCL{
     //Update Profile in case of error or modification
     function updateProfile(address _addr , string calldata _ipfs) external onlyAdmin claimedstatus{
         init = false ;
-        initializeProfile(_addr , _ipfs) ;
+        initialize(_addr , _ipfs) ;
         emit Status(block.timestamp, policyholder, address(this) , "The Insurance Policy profile got updated") ;
     }
 
@@ -88,12 +88,12 @@ contract insuranceCL{
 
 contract insuranceRB{
 
-    address public policyholder ;
-    string infoipfs ;
-    uint premium ;
     bool paymentdue ;
     bool claimed ;
     bool init ;
+    uint64 premium ;
+    address public policyholder ;
+    string infoipfs ;
 
     modifier initOnly(){
         require(!init , "Insurance Already Initialized");
@@ -102,7 +102,7 @@ contract insuranceRB{
     }
 
     modifier onlyAdmin(){
-        require(msg.sender == 0x7e9e9cfd7180054115e3910FdD7f8A5D962de7C8 , "Access Denied : Caller is not Admin");
+        require(msg.sender == 0x7e9e9cfd7180054115e3910FdD7f8A5D962de7C8 , "Access Denied : Not Admin");
         _;
     }
 
@@ -117,16 +117,23 @@ contract insuranceRB{
         address policy ,
         string message 
     ) ;
+
+    event Payment(
+        uint date ,
+        address PolicyHolder ,
+        address policy ,
+        string ipfshash
+    ) ;
     
     //Initialize function
-    function initializeProfile(address _addr , string memory _ipfs) public initOnly{
+    function initialize(address _addr , string memory _ipfs) public initOnly{
         policyholder = _addr ;
         infoipfs = _ipfs ;
         emit Status(block.timestamp, policyholder, address(this) , "The Insurance Policy is initialized") ;
     }
 
     //set basic policy info by manager
-    function setInfo(uint _premium, bool _payment ) external onlyAdmin claimedstatus{
+    function setInfo(uint64 _premium, bool _payment ) external onlyAdmin claimedstatus{
         premium = _premium ;
         paymentdue = _payment ;
         claimed = false ;
@@ -139,12 +146,13 @@ contract insuranceRB{
         //call payment function , upon success :
         paymentdue = true ;
         claimed = true ;
+        emit Payment(block.timestamp, policyholder, address(this) , infoipfs) ;
     }
 
     //Update Profile in case of error or modification
     function updateProfile(address _addr , string calldata _ipfs) external onlyAdmin claimedstatus{
         init = false ;
-        initializeProfile(_addr , _ipfs) ;
+        initialize(_addr , _ipfs) ;
         emit Status(block.timestamp, policyholder, address(this) , "The Insurance Policy profile got updated") ;
     }
 

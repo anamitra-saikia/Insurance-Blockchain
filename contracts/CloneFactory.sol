@@ -11,6 +11,7 @@ contract CloneFactory{
     address public owner ;
     address public base ; 
     address public  proxy ;
+    address public padd ;
     
     constructor(address _addr){
         owner = msg.sender ;
@@ -30,11 +31,12 @@ contract CloneFactory{
 
     function cloneD(string memory _text, uint _number, string memory _id) public onlyAdmin{
         bytes32 salt = keccak256(abi.encodePacked(_id)) ;
-      proxy = Clones.cloneDeterministic(base, salt) ;
-      testbase(proxy).initialize(_text , _number) ;
+        proxy = Clones.cloneDeterministic(base, salt) ;
+        testbase(proxy).initialize(_text , _number) ;
     }
 
-    function getProxy() public view returns(address){
-        return proxy ;
+    function predict(string memory _id)public {
+        bytes32 salt = keccak256(abi.encodePacked(_id)) ;
+        padd = Clones.predictDeterministicAddress(base,salt) ;
     }
 }
