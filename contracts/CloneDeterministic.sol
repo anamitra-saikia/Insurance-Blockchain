@@ -10,7 +10,7 @@ pragma solidity ^0.8.0;
  * Salt : bytes32 salt = keccak256(abi.encodePacked(ID))
  */
  
-library ClonesDeterministic {
+library CloneDeterministic {
 
     // CloneDeterministic() : Generated a minimal proxy on the determined address 
     

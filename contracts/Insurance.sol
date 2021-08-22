@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0 ;
 
 
-contract insuranceCL{
+contract insuranceA{
 
     bool paymentdue ;
     bool claimed ;
@@ -42,7 +42,7 @@ contract insuranceCL{
         string ipfshash
     ) ;
     
-    //Initialize function
+    //Initialize function : 
     function initialize(address _addr , string memory _ipfs) public initOnly{
         policyholder = _addr ;
         infoipfs = _ipfs ;
@@ -86,7 +86,7 @@ contract insuranceCL{
 
 
 
-contract insuranceRB{
+contract insuranceB{
 
     bool paymentdue ;
     bool claimed ;
