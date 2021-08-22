@@ -1,3 +1,5 @@
 *.json
 /contracts/testbase.sol
+/contracts/cloneF.sol
+/migrations/3_factory.js
 /XXX/*

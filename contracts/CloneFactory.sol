@@ -1,42 +1,52 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: UNLICENSED
 
 pragma solidity ^0.8.0 ;
 
-import "./Clones.sol" ;
-import "./testbase.sol" ;
-
+import "./CloneDeterministic.sol" ;
+import "./Insurance.sol" ;
 
 contract CloneFactory{
     
-    address public owner ;
-    address public base ; 
-    address public  proxy ;
-    address public padd ;
+    address public admin ;
+    address public implementationA ;
+    address public implementationB ;  
     
-    constructor(address _addr){
-        owner = msg.sender ;
-        base = _addr ;
+    constructor(address _addrA , address _addrB){
+        admin = msg.sender ;
+        implementationA = _addrA ;
+        implementationB = _addrB ;
     }
     
     modifier onlyAdmin(){
-        require(msg.sender == owner, 'Access Denied') ;
+        require(msg.sender == admin, 'Access Denied : Not Admin') ;
         _;
     }
      
-    function cloneGen(string memory _text, uint _number) public onlyAdmin{
-        proxy = Clones.clone(base) ;
-       testbase(proxy).initialize(_text , _number) ;
+
+    function makeCloneA(address _pHolder, string memory _ipfs, string memory _id) public onlyAdmin{
+        bytes32 salt = keccak256(abi.encodePacked(_id)) ;
+        address clone = CloneDeterministic.cloneDeterministic(implementationA, salt) ;
+        insuranceA(clone).initialize(_pHolder , _ipfs) ;
     }
 
 
-    function cloneD(string memory _text, uint _number, string memory _id) public onlyAdmin{
+    function makeCloneB(address _pHolder, string memory _ipfs, string memory _id) public onlyAdmin{
         bytes32 salt = keccak256(abi.encodePacked(_id)) ;
-        proxy = Clones.cloneDeterministic(base, salt) ;
-        testbase(proxy).initialize(_text , _number) ;
+        address clone = CloneDeterministic.cloneDeterministic(implementationB, salt) ;
+        insuranceB(clone).initialize(_pHolder , _ipfs) ;
     }
 
-    function predict(string memory _id)public {
+
+    function getAddressA(string memory _id)public view returns(address) {
         bytes32 salt = keccak256(abi.encodePacked(_id)) ;
-        padd = Clones.predictDeterministicAddress(base,salt) ;
+        address clone = CloneDeterministic.predictAddress(implementationA,salt) ;
+        return clone ;
+    }
+
+
+    function getAddressB(string memory _id)public view returns(address) {
+        bytes32 salt = keccak256(abi.encodePacked(_id)) ;
+        address clone = CloneDeterministic.predictAddress(implementationB,salt) ;
+        return clone ;
     }
 }
