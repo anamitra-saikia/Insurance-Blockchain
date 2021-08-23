@@ -1,6 +1,6 @@
 *.json
-/contracts/testbase.sol
-/contracts/clonefactorytest.sol
+/contracts/test.sol
+/contracts/cftest.sol
 /contracts/Clones.sol
 /migrations/3_factory.js
 /XXX/*
