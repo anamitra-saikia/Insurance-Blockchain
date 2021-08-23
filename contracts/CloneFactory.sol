@@ -9,12 +9,15 @@ contract CloneFactory{
     
     address public admin ;
     address public implementationA ;
-    address public implementationB ;  
+    address public implementationB ;
+    address public paymentProcessor ;
+    //address public clone ;  
     
-    constructor(address _addrA , address _addrB){
+    constructor(address _addrA , address _addrB, address _pay){
         admin = msg.sender ;
         implementationA = _addrA ;
         implementationB = _addrB ;
+        paymentProcessor = _pay ; 
     }
     
     modifier onlyAdmin(){
@@ -22,18 +25,25 @@ contract CloneFactory{
         _;
     }
      
+    event cloneGen(
+        address indexed policyholder,
+        address deployed,
+        string ID
+    ) ;
 
-    function makeCloneA(address _pHolder, string memory _ipfs, string memory _id) public onlyAdmin{
+    function makeCloneA(address _pHolder, string memory _ipfs, uint64 _premiumAmount, string memory _id) public onlyAdmin{
         bytes32 salt = keccak256(abi.encodePacked(_id)) ;
         address clone = CloneDeterministic.cloneDeterministic(implementationA, salt) ;
-        insuranceA(clone).initialize(_pHolder , _ipfs) ;
+        insuranceA(clone).initialize(_pHolder , _ipfs, _premiumAmount, paymentProcessor) ;
+        emit cloneGen(_pHolder, clone, _id);
     }
 
 
-    function makeCloneB(address _pHolder, string memory _ipfs, string memory _id) public onlyAdmin{
+    function makeCloneB(address _pHolder, string memory _ipfs, uint64 _premiumAmount, string memory _id) public onlyAdmin{
         bytes32 salt = keccak256(abi.encodePacked(_id)) ;
         address clone = CloneDeterministic.cloneDeterministic(implementationB, salt) ;
-        insuranceB(clone).initialize(_pHolder , _ipfs) ;
+        insuranceB(clone).initialize(_pHolder , _ipfs, _premiumAmount, paymentProcessor) ;
+        emit cloneGen(_pHolder, clone, _id);
     }
 
 

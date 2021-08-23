@@ -4,3 +4,5 @@
 /contracts/Clones.sol
 /migrations/3_factory.js
 /XXX_Rejected/*
+/node_modules
+/event.js
